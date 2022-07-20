@@ -1,78 +1,55 @@
 class Station
 
-  attr_reader :trains_total, :train_passenger, :trains_freight
+  attr_reader :trains
 
   def initialize(name)
     @name = name
-    @trains_total = []
-    @trains_passenger = []
-    @trains_freight = []
-    puts "Станция #{name} создана!"
+    @trains = []
   end
 
-  def show_all_trains
-    puts "Поезда на станции:"
-    for train in @trains_total
-      puts "#{train.number}"
+  def trains_by(type)
+    my_array = []
+    for train in @trains
+      if train.type == type
+        my_array << train
+      end
     end
+    return my_array
   end
 
-  def show_train_type_number
-    puts "Количество пассажирских поездов #{@trains_passenger.length}"
-    puts "Количество пассажирских поездов #{@trains_freight.length}"
+  def count_by(type)
+    i = 0
+    for train in @trains
+      if train.type == type
+        i += 1
+      end
+    end
+    return i
   end
 
   def accept_train(train)
-    @trains_total << train
-    puts "#{train.train_type.capitalize} поезд #{train.number} прибыл на станцию!"
-    if train.train_type == 'пассажирский'
-      @trains_passenger << train
-    else
-      @trains_freight << train
-    end 
+    @trains << train
   end
 
-  def send_train(number)
-    trains_on_station_number = []
-    for train in @trains_total 
-      trains_on_station_number << train.number
-    end
-    if trains_on_station_number.include?(number)
-      puts "Поезд №#{number} отправился в путь!"
-      for train in @trains_total
-        case train.train_type
-        when 'пассажирский'
-          @trains_total.delete(train)
-          @trains_passenger.delete(train)
-        when 'грузовой'
-          @trains_total.delete(train)
-          @trains_freight.delete(train)
-        end
-      end
-    else
-      puts "Ошибка! Поезда с таким номером нет на станции!"
-    end
+  def send_train(train)
+    @trains.delete(train)
   end
 
 end
 
 class Train
 
-  attr_reader :speed,:wagon_number, :train_type, :number
+  attr_reader :speed,:type
 
-  def initialize(number,train_type,wagon_number)
+  def initialize(number,type,wagon_number)
     @number = number
-    @train_type = train_type
+    @type = type
     @wagon_number = wagon_number
     @speed = 0
-    puts "Создан #{@train_type} поезд
-          Номер - #{@number}
-          Количество вагонов - #{@wagon_number}шт"
   end
 
   def speed_up
     @speed += 10
-    puts "Скорость - #{@speed} км/ч"
   end
 
   def stop
@@ -80,86 +57,62 @@ class Train
   end
 
   def attache_train
-    if @speed == 0
-      @wagon_number += 1
-      puts "Количество вагонов в составе #{@wagon_number} шт."
-    else
-      puts "Остановите поезд!"
+    unless @speed != 0
+      @wagon_number +=1
     end
   end
 
   def detache_train
-    if @speed == 0
-      if @wagon_number == 0 
-        puts "В составе больше нет вагонов!"
-      else
-        @wagon_number -= 1
-        puts "Количество вагонов в составе #{@wagon_number} шт." 
-      end
-    else
-      puts "Остановите поезд!"
+    if @speed == 0 && @wagon_number != 0
+      @wagon_number -= 1
     end
   end
 
   def take_route(route)
-    @route_start = route.from_station
-    @route_end = route.to_station
-    @route = route.whole_route
-    @route_index = 0
+    @current_station = 0
+    @route = route.route
+  end
+
+  def current_station
+    @route[@current_station]
+  end
+
+  def prev_station
+    @route[@current_station - 1]
+  end
+
+  def next_station
+    @route[@current_station + 1]
   end
 
   def move_forward
-    if @route[@route_index] == @route_end
-      puts "Вы находитесь на конечной станции! Поезд дальше не идет!"
-    else
-      @route_index+=1
+    unless @route[-1] == @route[@current_station]
+      @current_station += 1
     end
   end
 
   def move_back
-    if @route[@route_index] == @route_start
-      puts "Вы находитесь на конечной станции! Поезд дальше не идет!"
-    else
-      @route_index-=1
+    unless @route[0] == @route[@current_station]
+      @current_station -= 1
     end
-  end
-
-  def stations_return
-    puts "Предыдущая станция: #{@route[@route_index-1]}"
-    puts "Текущая станция: #{@route[@route_index]}"
-    puts "Следующая станция: #{@route[@route_index+1]}"
   end
 
 end
 
 class Route
 
-  attr_reader :whole_route, :from_station, :to_station
+  attr_reader :route
 
   def initialize(from_station, to_station)
-    @from_station = from_station
-    @to_station = to_station
-    @passing_station = []
-    @whole_route = [@from_station, @to_station]
-    puts "Маршрут создан! 
-          Начальная станция #{@from_station}
-          Конечная станция #{@to_station}"    
+    @route = [from_station,to_station]
   end
 
   def add_passing_station(station_name)
-    @passing_station << station_name
-    @whole_route.insert(-2, station_name)
-    puts "Станция #{station_name} добавлена в список промежуточных станций!"
+    @route.insert(-2,station_name)
   end
 
   def del_passing_station(station_name)
-    @passing_station.delete(station_name)
-    @whole_route.delete(station_name)
-    puts "Станция #{station_name} удалена из списка промежуточных станций!"
-  end
-
-  def print_route
-    @whole_route.each { |station| puts station }
+    @route.delete(station_name)
   end
 
 end

@@ -80,12 +80,18 @@ class Train
   def move_forward
     unless @route.route.last == current_station
       @current_station += 1
+      current_station
+      prev_station
+      next_station
     end
   end
 
   def move_back
     unless @route.route.first == current_station
       @current_station -= 1
+      current_station
+      prev_station
+      next_station
     end
   end
 

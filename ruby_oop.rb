@@ -8,23 +8,11 @@ class Station
   end
 
   def trains_by(type)
-    my_array = []
-    for train in @trains
-      if train.type == type
-        my_array << train
-      end
-    end
-    return my_array
+    @trains.select { |train| train.type == type }
   end
 
   def count_by(type)
-    i = 0
-    for train in @trains
-      if train.type == type
-        i += 1
-      end
-    end
-    return i
+    trains_by(type).count
   end
 
   def accept_train(train)
@@ -70,29 +58,33 @@ class Train
 
   def take_route(route)
     @current_station = 0
-    @route = route.route
+    @route = route
   end
 
   def current_station
-    @route[@current_station]
+    @route.route[@current_station]
   end
 
   def prev_station
-    @route[@current_station - 1]
+    unless @route.route.first == current_station
+      @route.route[@current_station - 1]
+    end
   end
 
   def next_station
-    @route[@current_station + 1]
+    unless @route.route.last == current_station
+      @route.route[@current_station + 1]
+    end
   end
 
   def move_forward
-    unless @route[-1] == @route[@current_station]
+    unless @route.route.last == current_station
       @current_station += 1
     end
   end
 
   def move_back
-    unless @route[0] == @route[@current_station]
+    unless @route.route.first == current_station
       @current_station -= 1
     end
   end

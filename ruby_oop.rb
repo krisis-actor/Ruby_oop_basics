@@ -78,21 +78,17 @@ class Train
   end
 
   def move_forward
-    unless @route.route.last == current_station
-      @current_station += 1
-      current_station
-      prev_station
-      next_station
-    end
+    return unless next_station
+    current_station.send_train(self)
+    @current_station += 1
+    current_station.accept_train(self)
   end
 
   def move_back
-    unless @route.route.first == current_station
-      @current_station -= 1
-      current_station
-      prev_station
-      next_station
-    end
+    return unless prev_station
+    current_station.send_train(self)
+    @current_station -= 1
+    current_station.accept_train(self)
   end
 
 end

@@ -1,7 +1,5 @@
 class Train
-  INIT_SPEED = 0
-  INCREMENT_SPEED = 10
-  attr_reader :speed,:type,:number
+  attr_reader :speed,:number,:type,:wagons
 
   def initialize(number)
     @number = number
@@ -10,7 +8,6 @@ class Train
   end
 
   def speed_up
-    #
     @speed += 10
   end
 
@@ -22,11 +19,9 @@ class Train
     @wagons << wagon if @speed == 0 && @type == wagon.type
   end
 
-  # def detache_train
-  #   if @speed == 0 &&  != 0
-      
-  #   end
-  # end
+  def detache_train
+    @wagons.pop() if @speed == 0 && @wagons.size > 0
+  end
 
   def take_route(route)
     @current_station_index = 0

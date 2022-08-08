@@ -6,12 +6,12 @@ class Route
     @route = [from_station,to_station]
   end
 
-  def add_passing_station(station_name)
-    @route.insert(-2,station_name)
+  def add_passing_station(station)
+    @route.insert(-2,station)
   end
 
-  def del_passing_station(station_name)
-    @route.delete(station_name)
+  def del_passing_station(station)
+    @route.delete(station)
   end
 
 end

@@ -61,6 +61,21 @@ def check_on_repeat(created_item,item_array)
       item_array << created_item
       puts "Поезд #{created_item.number} создан!"
     end
+  elsif created_item.is_a?(Route)
+    if item_array.empty?
+      item_array << created_item
+      puts "Маршрут создан!"
+    else
+      for route in item_array
+        if route.route.first == created_item.route.first ||
+           route.route.last ==  created_item.route.last
+          puts "Такой маршрут уже существует!"
+        else
+          item_array << created_item
+          puts "Маршрут создан!"
+        end
+      end
+    end
   end
 end
 
@@ -91,44 +106,66 @@ loop do
     check_on_repeat(new_cargo_train,user_created_trains)
     puts menu
   when 4
-    puts "Вы находитесь в конструкторе маршрута"
-    puts "[1] - Создать новый маршрут\n [2] - Редактировать существующий маршрут"
-    user_choice = gets.chomp.to_i
-    case user_choice
-    when 1
-      puts "Выберите начальную станцию из списка"
-      read_through(user_created_stations)
-      user_choice_1 = gets.chomp.to_i - 1
-      puts "Начальная станция - #{user_created_stations[user_choice_1].name}"
-      puts "Выберите конечную станцию из списка"
-      user_created_stations_route_end = user_created_stations.reject { 
-        |element| element == user_created_stations[user_choice_1] }
-      read_through(user_created_stations_route_end)
-      user_choice_2 = gets.chomp.to_i - 1
-      puts "Конечная станция - #{user_created_stations_route_end[user_choice_2].name}"
-      new_route = Route.new(
-        user_created_stations[user_choice_1],
-        user_created_stations_route_end[user_choice_2])
-      puts "[1] - Добавить промежуточную станцию\n[2] - Удалить промежуточную станцию\n[3] - Выход из конструктора маршрута"
+    if user_created_stations.size >= 2
+      #Конструктор маршрутов, начало
+      puts "Вы находитесь в конструкторе маршрута"
+      puts "[1] - Создать новый маршрут\n[2] - Редактировать существующий маршрут"
       user_choice = gets.chomp.to_i
       case user_choice
       when 1
-        user_choice = gets.chomp.capitalize
-        new_route.add_passing_station(user_choice)
+        #Создание маршрута, выбор начальной и конечной станции из списка созданных
+        puts "Выберите начальную станцию из списка"
+        read_through(user_created_stations)
+        user_choice_1 = gets.chomp.to_i - 1
+        puts "Начальная станция - #{user_created_stations[user_choice_1].name}"
+        puts "Выберите конечную станцию из списка"
+        user_created_stations_route_end = user_created_stations.reject { 
+          |element| element == user_created_stations[user_choice_1] }
+        read_through(user_created_stations_route_end)
+        user_choice_2 = gets.chomp.to_i - 1
+        puts "Конечная станция - #{user_created_stations_route_end[user_choice_2].name}"
+        new_route = Route.new(
+          user_created_stations[user_choice_1],
+          user_created_stations_route_end[user_choice_2])
+        check_on_repeat(new_route,user_created_routes)
       when 2
-        user_choice = gets.chomp.capitalize
-        new_route.del_passing_station(user_choice)
-      when 3
-        break
+        if user_created_routes.size >= 1
+          #Редактирование маршрута из списка созданных
+          puts "Выберите маршрут для редактирования: "
+          read_through(user_created_routes)
+          user_choice = gets.chomp.to_i - 1
+          selected_route = user_created_routes[user_choice]
+          puts "[1] - Добавить станцию\n[2] - Удалить станцию"
+          user_choice = gets.chomp.to_i
+          case user_choice
+          when 1
+            not_used_stations = user_created_stations - selected_route.route
+            puts "Выберите станцию: "
+            read_through(not_used_stations)
+            user_choice = gets.chomp.to_i - 1
+            selected_route.add_passing_station(user_created_stations[user_choice])
+            puts "Станция добавлена!"
+          when 2
+            if selected_route.route.size > 2
+              puts "Выберите станцию: "
+              read_through(selected_route.route.slice(1,-2))
+              user_choice = gets.chomp.to_i - 1
+              selected_route.del_passing_station(
+                selected_route.route.slice(1,-2)[user_choice]
+              )
+              puts "Станция удалена!"
+            else
+              puts "Нельзя удалять начальную и конечную станцию!"
+            end
+          end
+        else
+          puts "Нет маршрутов для редактирования!"
+        end
       end
-    when 2
-      read_through(user_created_routes)
-      user_choice = gets.chomp.to_i - 1
-      selected_route = user_created_routes[user_choice]
+      puts menu
+    else
+      puts "Для создания маршрута нужно минимум две станции!"
     end
-    
-    user_created_routes << new_route
-    puts menu
   when 5
     puts "Выберите поезд из списка"
     read_through(user_created_trains)
@@ -195,3 +232,7 @@ loop do
     puts "Мисклик!"
   end
 end
+=begin
+Использовать вычетание массивов чтобы найти одинаковые маршруты с промежуточными станциями ( сомнительная идея) == почитать в документации!
+
+=end

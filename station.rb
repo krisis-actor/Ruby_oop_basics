@@ -7,10 +7,6 @@ class Station
     @trains = []
   end
 
-  def trains_by(type)
-    @trains.select { |train| train.type == type }
-  end
-
   def count_by(type)
     trains_by(type).count
   end
@@ -22,5 +18,12 @@ class Station
   def send_train(train)
     @trains.delete(train)
   end
+
+  private
+
+  def trains_by(type)
+    @trains.select { |train| train.type == type }
+  end
+
 
 end

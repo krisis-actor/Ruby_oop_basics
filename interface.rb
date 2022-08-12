@@ -15,22 +15,23 @@ class Interface
     @user_created_routes = []
     @menu = 
     "Выберите действие:
-    1 - Создать станцию
-    2 - Создать пассажирский поезд
-    3 - Создать грузовой поезд
-    4 - Создавать маршруты и управлять станциями в нем (добавлять, удалять)
-    5 - Назначать маршрут поезду
-    6 - Добавлять вагоны к поезду
-    7 - Отцеплять вагоны от поезда
-    8 - Перемещать поезд по маршруту вперед и назад
-    9 - Просматривать список станций и список поездов на станции
-    0 - Выход из программы"
+    1. Создать станцию
+    2. Создать пассажирский поезд
+    3. Создать грузовой поезд
+    4. Создать маршрут
+    5. Управлять станциями в маршруте 
+    6. Назначать маршрут поезду
+    7. Добавить вагон к поезду
+    8. Отцепить вагон от поезда
+    9. Перемещать поезд по маршруту вперед и назад
+    10. Просмотреть список станций и список поездов на станции"
 
     start_up
 
   end
   
   private
+  #Пользователь может пользоваться программой, без внепланового вызова методов класса
 
   def start_up
     loop do
@@ -51,17 +52,17 @@ class Interface
       when 4
         create_route(@user_created_routes,@user_created_stations)
       when 5
-        set_route_to_train(@user_created_trains,@user_created_routes)
+        edit_route(@user_created_routes,@user_created_stations)
       when 6
-        add_wagon(@user_created_trains)
+        set_route_to_train(@user_created_trains,@user_created_routes)
       when 7
-        del_wagon(@user_created_trains)
+        add_wagon(@user_created_trains)
       when 8
-        move_train(@user_created_trains)
+        del_wagon(@user_created_trains)
       when 9
+        move_train(@user_created_trains)
+      when 10
         station_review(@user_created_stations)
-      when 0
-        break
       else 
         puts "Мисклик!"
     end
@@ -129,6 +130,37 @@ class Interface
     
   end
   
+  def edit_route(user_created_routes,user_created_stations)
+    puts "Выберите маршрут: "
+    route_list_read(user_created_routes)
+    selected_route = user_created_routes[gets.to_i - 1]
+    puts "1. Добавить станцию\n2. Удалить станцию"
+    user_choice = gets.to_i
+    case user_choice
+      when 1
+        user_created_stations_filtered = user_created_stations - 
+          selected_route.route
+        if user_created_stations_filtered.empty?
+          puts "Создайте станцию!"
+        else
+          station_list_read(user_created_stations_filtered)
+          selected_station = user_created_stations_filtered[gets.to_i - 1]
+          selected_route.add_passing_station(selected_station)
+          puts "Станция добавлена!"
+        end
+      when 2
+        if selected_route.route.size >=3
+          puts "Выберите промежуточную станцию для удаления: "
+          station_list_read(selected_route.route[1..-2])
+          selected_station = selected_route.route[gets.to_i - 1]
+          selected_route.del_passing_station(selected_station)
+          puts "Станция удалена!"
+        else
+          puts "Нет станций для удаления!"
+        end
+      end
+  end
+
   def station_list_read(user_created_stations)
     i = 0
     user_created_stations.each do
@@ -175,55 +207,74 @@ class Interface
   end
   
   def add_wagon(user_created_trains)
-    puts "Выберите поезд: "
-    train_list_read(user_created_trains)
-    selected_train = gets.chomp.to_i - 1
-    if user_created_trains[selected_train].type == 'passenger'
-      wagon = PassengerWagon.new
-      user_created_trains[selected_train].attache_train(wagon)
-      puts "Вагон добавлен!"
+    if user_created_trains.empty?
+      puts "Создайте поезд!"
     else
-      wagon = CargoWagon.new
-      user_created_trains[selected_train].attache_train(wagon)
-      puts "Вагон добавлен!"
+      puts "Выберите поезд: "
+      train_list_read(user_created_trains)
+      selected_train = gets.chomp.to_i - 1
+      if user_created_trains[selected_train].type == 'passenger'
+        wagon = PassengerWagon.new
+        user_created_trains[selected_train].attache_train(wagon)
+        puts "Вагон добавлен!"
+      else
+        wagon = CargoWagon.new
+        user_created_trains[selected_train].attache_train(wagon)
+        puts "Вагон добавлен!"
+      end
     end
   end
   
   def del_wagon(user_created_trains)
-    puts "Выберите поезд"
-    train_list_read(user_created_trains)
-    selected_train = gets.to_i - 1
-    if user_created_trains[selected_train].detache_train
-      puts "Вагон отцеплен!"
+    if user_created_trains.empty?
+      puts "Создайте поезд!"
     else
-      puts "У состава больше нет вагонов!"
+      puts "Выберите поезд"
+      train_list_read(user_created_trains)
+      selected_train = gets.to_i - 1
+      if user_created_trains[selected_train].detache_train
+        puts "Вагон отцеплен!"
+      else
+        puts "У состава больше нет вагонов!"
+      end
     end
   end
   
   def move_train(user_created_trains)
-    puts "Выберите поезд"
-    train_list_read(user_created_trains)
-    selected_train = gets.to_i - 1
-    
-    puts "В какую сторону едем?\n1. Вперед\n2. Назад"
-    dir_choice = gets.to_i
-    case dir_choice
-    when 1
-      puts user_created_trains[selected_train].move_forward
-      puts "Поезд на станции #{user_created_trains[selected_train].current_station.name}"
-    when 2
-      puts user_created_trains[selected_train].move_back
-      puts "Вы на станции #{user_created_trains[selected_train].current_station.name}"
-    end
+    if user_created_trains.empty?
+      puts "Создайте поезд!"
+    else
+      puts "Выберите поезд"
+      train_list_read(user_created_trains)
+      selected_train = gets.to_i - 1
+      if user_created_trains[selected_train].route.nil?
+        puts "Назначьте маршрут поезду!"
+      else
+        puts "В какую сторону едем?\n1. Вперед\n2. Назад"
+        dir_choice = gets.to_i
+        case dir_choice
+          when 1
+            user_created_trains[selected_train].move_forward
+            puts "Поезд на станции #{user_created_trains[selected_train].current_station.name}"
+          when 2
+            user_created_trains[selected_train].move_back
+            puts "Вы на станции #{user_created_trains[selected_train].current_station.name}"
+        end
+      end
+    end 
   end
   
   def station_review(user_created_stations)
-    puts "Выберите станцию из списка: "
-    station_list_read(user_created_stations)
-    selected_station = gets.chomp.to_i - 1
-    puts "Cтанция #{user_created_stations[selected_station].name}:
-    #{user_created_stations[selected_station].count_by('cargo')} грузовых поездов
-    #{user_created_stations[selected_station].count_by('passenger')} пассажирских поездов"
+    if user_created_stations.empty?
+      puts "Создайте станцию!"
+    else
+      puts "Выберите станцию из списка: "
+      station_list_read(user_created_stations)
+      selected_station = gets.chomp.to_i - 1
+      puts "Cтанция #{user_created_stations[selected_station].name}:
+      #{user_created_stations[selected_station].count_by('cargo')} грузовых поездов
+      #{user_created_stations[selected_station].count_by('passenger')} пассажирских поездов"
+    end
   end
 
 end

@@ -1,5 +1,5 @@
 class Train
-  attr_reader :speed,:number,:type,:wagons,:route
+  attr_reader :number,:type,:wagons,:route
 
   def initialize(number)
     @number = number
@@ -41,7 +41,9 @@ class Train
 
   private
 
-  #Перенес в приватный метод, т.к возможность управлять скоростью поездом не предоставляется
+  attr_reader :speed
+
+  #Перенес в приватный метод, т.к возможность управлять скоростью поездом не предоставляется пользователю
   def stop
     @speed = 0
   end
@@ -50,7 +52,6 @@ class Train
     @speed += 10
   end
 
-  #Методы являются валидацией для передвижения поезда вперед\назад и не используются в интерфейсе
   def prev_station
     unless @route.route.first == current_station
       @route.route[@current_station_index - 1]

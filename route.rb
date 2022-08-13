@@ -1,5 +1,7 @@
-class Route
+# frozen_string_literal: true
 
+# Маршрут
+class Route
   attr_reader :route, :number
 
   def initialize(number,from_station, to_station)
@@ -14,5 +16,4 @@ class Route
   def del_passing_station(station)
     @route.delete(station)
   end
-
 end

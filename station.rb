@@ -1,5 +1,7 @@
-class Station
+# frozen_string_literal: true
 
+# Станция
+class Station
   attr_reader :name, :trains
 
   def initialize(name)
@@ -24,6 +26,4 @@ class Station
   def trains_by(type)
     @trains.select { |train| train.type == type }
   end
-
-
 end

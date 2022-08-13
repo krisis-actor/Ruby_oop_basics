@@ -52,7 +52,9 @@ class Interface
       when 4
         create_route(@user_created_routes,@user_created_stations)
       when 5
-        edit_route(@user_created_routes,@user_created_stations)
+        edit_route(@user_created_routes,
+                  @user_created_stations,
+                  @user_created_trains)
       when 6
         set_route_to_train(@user_created_trains,@user_created_routes)
       when 7
@@ -130,7 +132,7 @@ class Interface
     
   end
   
-  def edit_route(user_created_routes,user_created_stations)
+  def edit_route(user_created_routes,user_created_stations,user_created_trains)
     puts "Выберите маршрут: "
     route_list_read(user_created_routes)
     selected_route = user_created_routes[gets.to_i - 1]
@@ -147,6 +149,7 @@ class Interface
           selected_station = user_created_stations_filtered[gets.to_i - 1]
           selected_route.add_passing_station(selected_station)
           puts "Станция добавлена!"
+          refresh_route(user_created_trains,selected_route)
         end
       when 2
         if selected_route.route.size >=3
@@ -155,10 +158,11 @@ class Interface
           selected_station = selected_route.route[gets.to_i - 1]
           selected_route.del_passing_station(selected_station)
           puts "Станция удалена!"
+          refresh_route(user_created_trains,selected_route)
         else
           puts "Нет станций для удаления!"
         end
-      end
+    end
   end
 
   def station_list_read(user_created_stations)
@@ -274,6 +278,12 @@ class Interface
       puts "Cтанция #{user_created_stations[selected_station].name}:
       #{user_created_stations[selected_station].count_by('cargo')} грузовых поездов
       #{user_created_stations[selected_station].count_by('passenger')} пассажирских поездов"
+    end
+  end
+
+  def refresh_route(user_created_trains,selected_route)
+    for train in user_created_trains
+      train.take_route(selected_route) if train.route == selected_route
     end
   end
 

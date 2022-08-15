@@ -73,10 +73,11 @@ end
 
 def create_station(stations)
   puts 'Введите название станции: '
-  new_station = Station.new(gets.chomp.capitalize)
-  if stations.find { |station| station.name == new_station.name }
+  name = gets.chomp.capitalize
+  if stations.find { |station| station.name == name }
     puts 'Станция с таким названием уже создана!'
   else
+    new_station = Station.new(name)
     stations << new_station
     puts "Станция #{new_station.name} создана!"
   end
@@ -84,10 +85,11 @@ end
 
 def create_p_train(trains)
   puts 'Введите номер поезда'
-  new_train = PassengerTrain.new(gets.chomp.capitalize)
-  if trains.find { |train| train.number == new_train.number }
+  number = gets.chomp.capitalize
+  if trains.find { |train| train.number == number }
     puts 'Поезд с таким номером уже существует!'
   else
+    new_train = PassengerTrain.new(number)
     trains << new_train
     puts "Поезд #{new_train.number} создан!"
   end
@@ -95,10 +97,11 @@ end
 
 def create_c_train(trains)
   puts 'Введите номер поезда'
-  new_train = CargoTrain.new(gets.chomp.capitalize)
-  if trains.find { |train| train.number == new_train.number }
+  number = gets.chomp.capitalize
+  if trains.find { |train| train.number == number }
     puts 'Поезд с таким номером уже существует!'
   else
+    new_train = CargoTrain.new(number)
     trains << new_train
     puts "Поезд #{new_train.number} создан!"
   end

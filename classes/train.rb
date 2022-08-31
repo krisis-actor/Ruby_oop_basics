@@ -1,13 +1,27 @@
 # frozen_string_literal: true
 
+require_relative '../modules/factory'
+require_relative '../modules/instance_counter'
+
 # Поезд
 class Train
+  include Factory
+  include InstanceCounter
   attr_reader :number, :type, :wagons, :route
+
+  @@trains = []
+
+  def self.find(number)
+    @@trains.find { |train| train.number == number }
+  end
 
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
+    made_by
+    @@trains << self
+    register_instance
   end
 
   def attache_train(wagon)

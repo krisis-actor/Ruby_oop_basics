@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'wagon'
+
 # Пассажирский вагон
 class PassengerWagon
-  attr_reader :type
-
   def initialize
+    super
     @type = 'passenger'
   end
 end

@@ -2,12 +2,15 @@
 
 require_relative '../modules/factory'
 require_relative '../modules/instance_counter'
-
+require_relative '../modules/validation'
 # Поезд
 class Train
   include Factory
   include InstanceCounter
+  include Validation
   attr_reader :number, :type, :wagons, :route
+
+  NUMBER_FORMAT = /^[0-9А-Я]{3}-?[0-9А-Я]{2}$/
 
   @@trains = []
 
@@ -15,11 +18,13 @@ class Train
     @@trains.find { |train| train.number == number }
   end
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
+    @type = type
+    validate!
+    made_by
     @wagons = []
     @speed = 0
-    made_by
     @@trains << self
     register_instance
   end
@@ -81,5 +86,13 @@ class Train
     return if @route.route.last == current_station
 
     @route.route[@current_station_index + 1]
+  end
+
+  protected
+
+  def validate!
+    raise 'Неверный номер поезда' if number !~ NUMBER_FORMAT
+    raise 'Задайте тип поезда' if @type.nil?
+    raise 'Задайте номер поезда' if @number.nil?
   end
 end

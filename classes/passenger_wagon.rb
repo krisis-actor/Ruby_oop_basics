@@ -3,9 +3,8 @@
 require_relative 'wagon'
 
 # Пассажирский вагон
-class PassengerWagon
+class PassengerWagon < Wagon
   def initialize
-    super
-    @type = 'passenger'
+    super('passenger')
   end
 end

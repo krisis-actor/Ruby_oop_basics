@@ -81,11 +81,14 @@ def create_station(stations)
     stations << new_station
     puts "Станция #{new_station.name} создана!"
   end
+  rescue RuntimeError => e
+    puts e.to_s
+    retry
 end
 
 def create_p_train(trains)
   puts 'Введите номер поезда'
-  number = gets.chomp.capitalize
+  number = gets.chomp.upcase
   if trains.find { |train| train.number == number }
     puts 'Поезд с таким номером уже существует!'
   else
@@ -93,11 +96,14 @@ def create_p_train(trains)
     trains << new_train
     puts "Поезд #{new_train.number} создан!"
   end
+rescue RuntimeError => e
+  puts e.to_s
+  retry
 end
 
 def create_c_train(trains)
   puts 'Введите номер поезда'
-  number = gets.chomp.capitalize
+  number = gets.chomp.upcase
   if trains.find { |train| train.number == number }
     puts 'Поезд с таким номером уже существует!'
   else
@@ -105,6 +111,9 @@ def create_c_train(trains)
     trains << new_train
     puts "Поезд #{new_train.number} создан!"
   end
+rescue RuntimeError => e
+  puts e.to_s
+  retry
 end
 
 def create_route(routes, stations)
@@ -132,6 +141,9 @@ def create_route(routes, stations)
   else
     puts 'Требуется минимум 2 станции для создания маршрута!'
   end
+  rescue RuntimeError => e
+    puts e.to_s
+    retry
 end
 
 def edit_route( routes,

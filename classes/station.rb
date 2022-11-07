@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require_relative '../modules/instance_counter'
+require_relative '../modules/validation'
 
 # Станция
 class Station
   include InstanceCounter
+  include Validation
   attr_reader :name, :trains
+
+  NAME_FORMAT = /[А-Я]{1}[а-я]/
 
   class << self
     def all
@@ -17,6 +21,7 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     @@stations << self
     register_instance
@@ -32,6 +37,13 @@ class Station
 
   def send_train(train)
     @trains.delete(train)
+  end
+
+  protected
+
+  def validate!
+    raise 'Неверное название станции' if name !~ NAME_FORMAT
+    raise 'Задайте имя станции' if @name.nil?
   end
 
   private

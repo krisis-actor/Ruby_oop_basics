@@ -5,7 +5,6 @@ require_relative 'train'
 # Грузовой поезд
 class CargoTrain < Train
   def initialize(number)
-    super
-    @type = 'cargo'
+    super(number, 'cargo')
   end
 end

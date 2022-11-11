@@ -63,6 +63,10 @@ class Train
     current_station.accept_train(self)
   end
 
+  def wagon_info(block)
+    @wagons.each_with_index { |wagon, i| block.call(wagon, i + 1) }
+  end
+
   private
 
   attr_reader :speed

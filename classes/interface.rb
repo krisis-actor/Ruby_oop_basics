@@ -28,18 +28,6 @@ class Interface
     11. Вывести список поездов на станции в формате Номер/Тип/Кол-во вагонов
     12. Вывести список вагонов поезда в формате Номер вагона/Тип/Кол-во свободных(ого) мест(объема)/Кол-во занятых(ого) мест(объема)
     13. Занять место/объем в вагоне"
-    # Lambda
-    @train_info = proc do |train|
-      puts "Номер поезда: #{train.number}\nТип: #{train.type}\nКол-во вагонов: #{train.wagons.size}"
-    end
-
-    @wagon_info = lambda do |wagon, i|
-      if wagon.type == 'passenger'
-        puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nКол-во свободных мест: #{wagon.free_seats}\nКол-во занятых мест: #{wagon.taken_seats}"
-      else
-        puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nСвободный объем: #{wagon.free_volume}\nЗанятый объем: #{wagon.taken_volume}"
-      end
-    end
     start_up
   end
   # Пользователь может пользоваться программой, без внепланового вызова методов класса
@@ -81,11 +69,11 @@ class Interface
     when 10
       station_review(@stations)
     when 11
-      station_train_info(@stations, @train_info)
+      station_train_info(@stations)
     when 12
-      train_wagon_info(@trains, @wagon_info)
+      train_wagon_info(@trains)
     when 13
-      reserve_wagon(@trains, @wagon_info)
+      reserve_wagon(@trains)
     else
       puts 'Мисклик!'
     end
@@ -317,18 +305,25 @@ def station_review(stations)
   end
 end
 
-def station_train_info(stations, block)
+def station_train_info(stations)
   puts 'Выберите станцию'
   station_list_read(stations)
   selected_station = stations[gets.chomp.to_i - 1]
-  selected_station.train_info(block)
+  selected_station.train_info { |train| puts "Номер поезда: #{train.number}\nТип: #{train.type}\nКол-во вагонов: #{train.wagons.size}" }
 end
 
-def train_wagon_info(trains, block)
+def train_wagon_info(trains)
   puts 'Выберите поезд'
   train_list_read(trains)
   selected_train = trains[gets.chomp.to_i - 1]
-  selected_train.wagon_info(block)
+  selected_train.wagon_info do |wagon, i|
+    if wagon.type == 'passenger'
+      puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nКол-во свободных мест: #{wagon.free_seats}\nКол-во занятых мест: #{wagon.taken_seats}"
+    else
+      puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nСвободный объем: #{wagon.free_volume}\nЗанятый объем: #{wagon.taken_volume}"
+    end
+  end
+  selected_train
 end
 
 def refresh_route(trains, selected_route)
@@ -337,11 +332,15 @@ def refresh_route(trains, selected_route)
   end
 end
 
-def reserve_wagon(trains, block)
-  puts 'Выберите поезд'
-  train_list_read(trains)
-  selected_train = trains[gets.chomp.to_i - 1]
-  selected_train.wagon_info(block)
+def reserve_wagon(trains)
+  selected_train = train_wagon_info(trains)
+  # selected_train.wagon_info do |wagon, i|
+  #   if wagon.type == 'passenger'
+  #     puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nКол-во свободных мест: #{wagon.free_seats}\nКол-во занятых мест: #{wagon.taken_seats}"
+  #   else
+  #     puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nСвободный объем: #{wagon.free_volume}\nЗанятый объем: #{wagon.taken_volume}"
+  #   end
+  # end
   puts 'Выберите вагон:'
   selected_train.wagons.each_with_index do |_wagon, i|
     puts "Вагон №#{i += 1}"

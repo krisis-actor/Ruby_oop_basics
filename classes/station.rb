@@ -39,8 +39,8 @@ class Station
     @trains.delete(train)
   end
 
-  def train_info(block)
-    @trains.each { |train| block.call(train) }
+  def train_info(&block)
+    @trains.each { |train| block.call(train) } if block_given?
   end
 
   protected

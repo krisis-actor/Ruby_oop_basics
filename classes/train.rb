@@ -63,8 +63,8 @@ class Train
     current_station.accept_train(self)
   end
 
-  def wagon_info(block)
-    @wagons.each_with_index { |wagon, i| block.call(wagon, i + 1) }
+  def wagon_info(&block)
+    @wagons.each_with_index { |wagon, i| block.call(wagon, i + 1) } if block_given?
   end
 
   private

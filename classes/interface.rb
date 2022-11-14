@@ -334,13 +334,6 @@ end
 
 def reserve_wagon(trains)
   selected_train = train_wagon_info(trains)
-  # selected_train.wagon_info do |wagon, i|
-  #   if wagon.type == 'passenger'
-  #     puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nКол-во свободных мест: #{wagon.free_seats}\nКол-во занятых мест: #{wagon.taken_seats}"
-  #   else
-  #     puts "Номер вагона: #{i}\nТип вагона: #{wagon.type}\nСвободный объем: #{wagon.free_volume}\nЗанятый объем: #{wagon.taken_volume}"
-  #   end
-  # end
   puts 'Выберите вагон:'
   selected_train.wagons.each_with_index do |_wagon, i|
     puts "Вагон №#{i += 1}"

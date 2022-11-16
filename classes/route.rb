@@ -10,7 +10,7 @@ class Route
 
   attr_reader :route, :number
 
-  NUMBER_FORMAT = /^\d{3}$/
+  NUMBER_FORMAT = /^\d{3}$/.freeze
 
   def initialize(number, from_station, to_station)
     @number = number
@@ -20,7 +20,7 @@ class Route
   end
 
   def add_passing_station(station)
-    @route.insert(-2,station)
+    @route.insert(-2, station)
   end
 
   def del_passing_station(station)

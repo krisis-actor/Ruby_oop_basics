@@ -10,7 +10,7 @@ class Train
   include Validation
   attr_reader :number, :type, :wagons, :route
 
-  NUMBER_FORMAT = /^[0-9А-Я]{3}-?[0-9А-Я]{2}$/
+  NUMBER_FORMAT = /^[0-9А-Я]{3}-?[0-9А-Я]{2}$/.freeze
 
   @@trains = []
 

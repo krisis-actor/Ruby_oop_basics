@@ -9,7 +9,7 @@ class Station
   include Validation
   attr_reader :name, :trains
 
-  NAME_FORMAT = /[А-Я]{1}[а-я]/
+  NAME_FORMAT = /[А-Я]{1}[а-я]/.freeze
 
   class << self
     def all

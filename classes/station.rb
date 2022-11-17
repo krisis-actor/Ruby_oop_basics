@@ -13,17 +13,17 @@ class Station
 
   class << self
     def all
-      @@stations
+      @stations #TODO Использовать метод класса для валидации станций через интерфейс
     end
   end
 
-  @@stations = []
+  @stations = []
 
   def initialize(name)
     @name = name
     validate!
     @trains = []
-    @@stations << self
+    self.class.all << self
     register_instance
   end
 

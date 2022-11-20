@@ -6,5 +6,6 @@ require_relative 'train'
 class PassengerTrain < Train
   def initialize(number)
     super(number, 'passenger')
+    self.class.superclass.find(self)
   end
 end

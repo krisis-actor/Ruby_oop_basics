@@ -11,19 +11,23 @@ class Station
 
   NAME_FORMAT = /[А-Я]{1}[а-я]/.freeze
 
-  class << self
-    def all
-      @stations #TODO Использовать метод класса для валидации станций через интерфейс
-    end
+  @stations = []
+
+  def self.all
+    @stations
   end
 
-  @stations = []
+  def self.find(new_station)
+    raise 'Станция с таким названием уже существует!' if @stations.find { |station| station.name == new_station.name }
+
+    @stations << new_station
+  end
 
   def initialize(name)
     @name = name
     validate!
     @trains = []
-    self.class.all << self
+    self.class.find(self)
     register_instance
   end
 

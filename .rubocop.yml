@@ -1,0 +1,24 @@
+Metrics/MethodLength:
+  Enabled: true
+  Exclude:
+    - './classes/interface.rb'
+
+Metrics/AbcSize:
+  Enabled: true
+  Exclude:
+    - './classes/interface.rb'
+
+Layout/LineLength:
+  Enabled: true
+  Exclude:
+    - './classes/interface.rb'
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Exclude:
+    - './classes/interface.rb'
+
+Style/RescueStandardError:
+  Enabled: true
+  Exclude:
+    - './modules/validation.rb'

@@ -12,10 +12,16 @@ class Train
 
   NUMBER_FORMAT = /^[0-9А-Я]{3}-?[0-9А-Я]{2}$/.freeze
 
-  @@trains = []
+  @trains = []
 
-  def self.find(number)
-    @@trains.find { |train| train.number == number }
+  def self.all
+    @trains
+  end
+
+  def self.find(new_train)
+    raise 'Поезд с таким номером уже существует!' if @trains.find { |train| train.number == new_train.number }
+
+    @trains << new_train
   end
 
   def initialize(number, type)
@@ -25,7 +31,6 @@ class Train
     made_by
     @wagons = []
     @speed = 0
-    @@trains << self
     register_instance
   end
 
@@ -34,7 +39,7 @@ class Train
   end
 
   def detache_train
-    @wagons.pop if @speed.zero? && @wagons.empty?
+    @wagons.pop if @speed.zero? && @wagons.size >= 1
   end
 
   def take_route(route)
